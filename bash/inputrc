@@ -1,0 +1,6 @@
+# Auto-completion settings
+#
+# cycle forward
+Control-k: menu-complete
+# cycle backward
+Control-j: menu-complete-backward

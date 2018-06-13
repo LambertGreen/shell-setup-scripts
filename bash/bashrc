@@ -1,0 +1,93 @@
+
+echo "Setting up Bash environment..."
+
+# bash completion setup
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+# Tableau common development setup
+export TUBE_EMAIL=lgreen@tableau.com
+# Put stuff specific to a project in a project related script.  p4 set P4CONFIG=.p4config
+
+# Add scripts to path
+export PATH=$PATH:~/scripts/
+
+set OS=""
+case "$OSTYPE" in
+linux*)
+    OS="Linux"
+
+    # color LS
+    alias ls="ls --color=auto"
+
+    # Git
+    export GIT_PS1_SHOWDIRTYSTATE=true
+    [ -f ~/git-completion.bash ] && source ~/git-completion.bash
+    [ -f ~/git-prompt.sh ] && source ~/git-prompt.sh
+
+    #export PS1="\w\$(__git_ps1 '[%s]') $ "
+    export PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]`__git_ps1`\[\033[0m\]\n$ '
+    ;;
+darwin*)
+    OS="OSX"
+
+    # Git
+    # Alias git to homebrew version since deleting Apple version requires turning off SIP.
+    # Note older versions of git have a security vulnerabliilty.
+    alias git="/usr/local/bin/git"
+    export GIT_PS1_SHOWDIRTYSTATE=true
+    [ -f ~/git-completion.bash ] && source ~/git-completion.bash
+    [ -f ~/git-prompt.sh ] && source ~/git-prompt.sh
+
+    #export PS1="\w\$(__git_ps1 '[%s]') $ "
+    export PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]`__git_ps1`\[\033[0m\]\n$ '
+
+    # color LS
+    alias ls="ls -G"
+
+    # VScode
+    code(){
+        VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $*
+    }
+    ;;
+cygwin*)
+
+    # Path updates
+    export PATH=$PATH:/cygdrive/d/dev/depot_tools
+
+    # color LS
+    alias ls="ls --color=auto"
+
+    # Git
+    export PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[35m\]$OSTYPE \[\033[33m\]\w\[\033[36m\]\n$ '
+
+    # VScode
+    alias code="/cygdrive/c/Program\ Files/Microsoft\ VS\ Code/Code.exe" $*
+    ;;
+msys*)
+    # SSH settings
+    #   Unset HOMEDRIVE and HOMEPATH as these are set by domain policy and point to a share. We do not want to use a share by rather our local home folder.
+    unset HOMEDRIVE
+    unset HOMEPATH
+    unset HOMESHARE
+
+    # Git setup
+    export GIT_PS1_SHOWDIRTYSTATE=true
+    . /usr/share/git/completion/git-completion.bash
+    . /usr/share/git/completion/git-prompt.sh
+    export PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]\n\[\033[32m\]\u@\h \[\033[35m\]$MSYSTEM \[\033[33m\]\w\[\033[36m\]`__git_ps1`\[\033[0m\]\n$ '
+
+    # color LS
+    alias ls="ls --color=auto"
+    ;;
+*)
+    >&2 echo "Unknown OS type " $OSTYPE
+    ;;
+esac
+
+# Source local config if it exists
+if [ -f ~/.bashrc_local ]; then
+    . ~/.bashrc_local
+fi
+
+# Say something encouraging and confirming
+echo "Ready to code..."
