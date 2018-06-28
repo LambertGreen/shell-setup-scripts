@@ -8,7 +8,7 @@ call "%ConEmuBaseDir%\CmdInit.cmd"
 :: ------------------------------------------------
 :: aliases
 :: ------------------------------------------------
-doskey ls=ls --color
+doskey ls=ls --color $*
 doskey dev=pushd %userprofile%\dev
 doskey home=pushd %userprofile%
 
